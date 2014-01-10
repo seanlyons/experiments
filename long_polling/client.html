@@ -17,6 +17,7 @@
             dataType: "json",
             //async: true
             complete: function(data, response_string) {
+                console.log('completed!');
                 //Delegate this response:
                 pushDelegation(data);
                 //It's long-polling time! Kick off another pushRequest, which will wait for the next incoming push from the server.
