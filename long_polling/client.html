@@ -1,0 +1,35 @@
+<!DOCTYPE html> 
+<html>
+<head>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+</head>
+<body>
+    last_response: <div id="last_response">null</div>
+</body>
+<script>
+    pushRequest();
+    
+    function pushRequest() {
+        return $.ajax({ type: "GET",
+            url: 'server.php',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            //async: true
+            complete: function(data, response_string) {
+                //Delegate this response:
+                pushDelegation(data);
+                //It's long-polling time! Kick off another pushRequest, which will wait for the next incoming push from the server.
+                pushRequest();
+            }, 
+            error: function(error) {
+            
+            }
+        }).responseText;
+    }
+    
+    function pushDelegation(data) {
+        console.log(data);
+    }
+</script> 
+</html>
