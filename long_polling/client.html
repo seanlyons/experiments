@@ -5,12 +5,16 @@
 	<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 </head>
 <body>
-    last_response: <div id="last_response">null</div>
+    last_response_time: <div id="last_response_time">0</div>
+    last_response_msg: <div id="last_response_msg">null</div>
 </body>
 <script>
-    pushRequest();
+    document.getElementById("last_response_time").innerHTML = 'first: ' + new Date().getTime();
     
+	pushRequest();
+	
     function pushRequest() {
+	console.log('pushRequest');
         return $.ajax({ type: "GET",
             url: 'server.php',
             contentType: "application/json; charset=utf-8",
@@ -18,10 +22,19 @@
             //async: true
             complete: function(data, response_string) {
                 console.log('completed!');
-                //Delegate this response:
-                pushDelegation(data);
+                
+				response = data.responseText;
+console.log('response = ');
+console.log(response);
+
+				//Delegate this response:
+                pushDelegation(response);
                 //It's long-polling time! Kick off another pushRequest, which will wait for the next incoming push from the server.
-                pushRequest();
+				if ( ! response["kill9"]) {
+					pushRequest();
+				} else {
+					console.log('kill9ed, beezies.');
+				}
             }, 
             error: function(error) {
             
@@ -29,8 +42,13 @@
         }).responseText;
     }
     
-    function pushDelegation(data) {
-        console.log(data);
+    function pushDelegation(response) {
+        console.log('pushDelegation');
+        console.log(response);
+        
+        document.getElementById("last_response_time").innerHTML = new Date().getTime();		
+		document.getElementById("last_response_msg").innerHTML = response;
+		
     }
 </script> 
 </html>
